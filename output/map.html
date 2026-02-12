@@ -297,8 +297,20 @@ function buildPopupHtml(p) {
 
 // ── Map ─────────────────────────────────────────────────
 var map = L.map('map').setView([34.05, -118.25], 10);
-L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+
+// Base tiles without labels (renders below polygons)
+L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png', {
   attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>',
+  subdomains: 'abcd',
+  maxZoom: 19
+}).addTo(map);
+
+// Labels-only layer (renders above polygons)
+map.createPane('labels');
+map.getPane('labels').style.zIndex = 650;
+map.getPane('labels').style.pointerEvents = 'none';
+L.tileLayer('https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png', {
+  pane: 'labels',
   subdomains: 'abcd',
   maxZoom: 19
 }).addTo(map);
@@ -441,7 +453,7 @@ function applyFilters() {
           weight: 1.5,
           opacity: 1,
           color: '#fff',
-          fillOpacity: 0.7
+          fillOpacity: 0.45
         };
       },
       onEachFeature: function(feature, layer) {
@@ -463,7 +475,7 @@ function applyFilters() {
             e.target.setStyle({
               weight: 3,
               color: '#333',
-              fillOpacity: 0.9
+              fillOpacity: 0.7
             });
             e.target.bringToFront();
           },
